@@ -14,7 +14,7 @@ fun main() {
     getNumbers()
 
     print("Try again? type y or n: ")
-    val tryAgain: String? = readLine() ?: null
+    val tryAgain: String? = readLine()
     if(tryAgain == "y") getNumbers()
     println("Well Done")
 }
@@ -75,7 +75,7 @@ fun calculate(num1:Float, num2:Float, operator:Int?): Float? {
         2 -> num1 - num2
         3 -> num1 / num2
         4 -> num1 * num2
-        5 -> num1 / num2
+        5 -> (num1 * num2) / 100
         6 -> num1.pow(num2)
         7 -> factorial()?.toFloat()
         else -> {
