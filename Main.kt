@@ -1,47 +1,39 @@
 import kotlin.math.pow
 
-/*
-Checks if the character received is a numeric character, evaluates if
-is a float number and performs the chosen operation.
-If the choice is 7 (factorial), discards both numbers and ask for a 
-new one.
-*/
+const val SUM = 1
+const val SUB = 2
+const val DIV = 3
+const val MULT = 4
+const val PERCT = 5
+const val POW = 6
 
 fun main() {
     println("##################################\n" +
             "# The simpliest Calculator Ever! #\n" +
             "##################################")
-    getNumbers()
-
-    print("Try again? type y or n: ")
-    val tryAgain: String? = readLine()
-    if(tryAgain == "y") getNumbers()
+    do {
+        startCalculator()
+        print("Try again? type y or n: ")
+        val tryAgain = readLine()!!.lowercase() == "y"
+    } while (tryAgain)
     println("Well Done")
 }
 
-fun evalChar(strMessage:String): String {
-    val strChar: String = readLine().toString()
-    val floatChar = strChar.toFloatOrNull()
+fun prompt(strMessage:String): String {
+    println(strMessage)
 
-    return if (strChar.isNotEmpty() && floatChar != null) {
-        strChar
-    } else {
-        println("Invalid input! Try again please.")
-        println(strMessage)
-        evalChar(strMessage)
+    return try {
+        val input = readLine()!!
+        input.toFloat()
+        input
+    } catch (ex: Exception) {
+        prompt(strMessage)
     }
 }
 
-fun getNumbers() {
-    val firstQuestion =     "Enter the first number: "
-    val secondQuestion =    "Enter the second number: "
+fun startCalculator() {
     val operatorQuestion =  "Enter a valid Operator: "
-
-    print(firstQuestion)
-    val num1 = evalChar(firstQuestion)
-    print(secondQuestion)
-    val num2 = evalChar(secondQuestion)
-    print(
+    println(
         "Enter an operator number as listed:\n" +
                 "1 for plus\n" +
                 "2 for minus\n" +
@@ -49,49 +41,57 @@ fun getNumbers() {
                 "4 for multiplied\n" +
                 "5 for percent\n" +
                 "6 for raise to the power\n" +
-                "7 for factorial\n" +
-                ": "
+                "7 for factorial\n"
     )
-    val operator = evalChar(operatorQuestion)
-    checkIfIsCorrect(num1.toFloat(), num2.toFloat())
-    if (operator.isEmpty() || operator.toInt() in 1..7) {
-        val result = calculate(num1.toFloat(), num2.toFloat(), operator.toInt())
-        println("The result is: %.2f".format(result))
-    } else {
-        println("You entered a wrong operator number, please try again")
+    var operator = 0
+    while (operator !in 1..7) {
+        operator = prompt(operatorQuestion).toInt()
     }
-}
 
-fun checkIfIsCorrect(num1:Float?, num2:Float?){
-    if(num1.toString().isEmpty() || num2.toString().isEmpty()) {
-        println("Missed some number, please try again.")
-        getNumbers()
-    }
-}
-
-fun calculate(num1:Float, num2:Float, operator:Int?): Float? {
-    return when (operator) {
-        1 -> num1 + num2
-        2 -> num1 - num2
-        3 -> num1 / num2
-        4 -> num1 * num2
-        5 -> (num1 * num2) / 100
-        6 -> num1.pow(num2)
-        7 -> factorial()?.toFloat()
-        else -> {
-            println("You entered a wrong operator number, please try again")
-            getNumbers()
-            null
+    val result: Float = when (operator) {
+        SUM -> {
+            val (num1, num2) = getPairFloatNumbers()
+            num1 + num2
         }
+        SUB -> {
+            val (num1, num2) = getPairFloatNumbers()
+            num1 - num2
+        }
+        DIV -> {
+            val (num1, num2) = getPairFloatNumbers()
+            num1 / num2
+        }
+        MULT -> {
+            val (num1, num2) = getPairFloatNumbers()
+            num1 * num2
+        }
+        PERCT -> {
+            val (num1, num2) = getPairFloatNumbers()
+            (num1 * num2) / 100
+        }
+        POW -> {
+            val (num1, num2) = getPairFloatNumbers()
+            num1.pow(num2)
+        }
+        else -> factorial().toFloat()
     }
+    println("The result is: %.2f".format(result))
 }
 
-fun factorial():Long? {
+fun getPairFloatNumbers(): Pair<Float, Float> {
+    val num1 = prompt("Enter the first number: ").toFloat()
+    val num2 = prompt("Enter the second number: ").toFloat()
+    return Pair(num1, num2)
+}
+
+fun getSingleIntNumber() : Int {
+    return prompt("Enter a number: ").toInt()
+}
+
+fun factorial():Long {
     var factorial: Long = 1
-    print("Wait a minute, I need just one Integer number.\n" +
-            "Type it here: ")
-    val number: String = readLine().toString()
-    for (i in 1..number.toInt()) {
+    val number = getSingleIntNumber()
+    for (i in 1..number) {
         factorial *= i.toLong()
     }
     return factorial
